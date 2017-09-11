@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.allin.knowledge.mapper.CountryMapper">
+
+  <resultMap id="abatorgenerated_CountryResult" type="com.allin.knowledge.model.Country">
+    <id column="Id" jdbcType="INTEGER" property="id" />
+    <result column="countryname" jdbcType="VARCHAR" property="countryname" />
+    <result column="countrycode" jdbcType="VARCHAR" property="countrycode" />
+  </resultMap>
+
+    <!--实体映射-->
+
+
+    <!-- 通用查询结果列-->
+    <sql id="abatorgenerated_Example_Where_Clause">
+        <if test="countryname!=null">and countryname = #{countryname,jdbcType=VARCHAR}</if>
+        <if test="countrycode!=null">and countrycode = #{countrycode,jdbcType=VARCHAR}</if>
+    </sql>
+
+    <!-- 查询（根据主键ID查询） -->
+
+    <!-- 添加 （动态匹配所有有值字段）-->
+    <insert id="inserts" parameterType="java.util.HashMap">
+        <selectKey keyProperty="id" order="BEFORE" resultType="int">
+            SELECT LAST_INSERT_ID() as id
+            FROM country
+            limit 1;
+        </selectKey>
+        INSERT INTO country	(id,
+        <if test="countryname!=null">countryname</if>
+        <if test="countrycode!=null">countrycode</if>
+        <![CDATA[) values (]]>#{id},
+        <if test="countryname!=null">#{countryname},</if>
+        <if test="countrycode!=null">#{countrycode},</if>
+        <![CDATA[)]]>
+    </insert>
+
+    <!-- 修 改-->
+    <update id="updates" parameterType="java.util.HashMap">
+        UPDATE country
+        <set>
+            <if test="countryname!=null">countryname=#{countryname},</if>
+            <if test="countrycode!=null">countrycode=#{countrycode},</if>
+        </set>
+
+        WHERE id = #id:INTEGER#
+    </update>
+
+    <!-- 查询getList -->
+    <select id="getList" parameterType="java.util.HashMap" resultMap="abatorgenerated_CountryResult">
+        SELECT
+        id,	 countryname,	 countrycode
+        FROM country
+        WHERE 1=1
+        <include refid="abatorgenerated_Example_Where_Clause" />
+        limit #{firstResult, jdbcType=BIGINT},#{maxResult, jdbcType=BIGINT}
+    </select>
+
+    <!-- 查询geCount -->
+    <select id="getCounts" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM country
+        WHERE 1=1
+        <include refid="abatorgenerated_Example_Where_Clause" />
+    </select>
+
+
+</mapper>

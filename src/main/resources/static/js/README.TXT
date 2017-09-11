@@ -1,0 +1,3 @@
+One or more files in this folder have been compressed by JavaScript Compressor Plugin for IntelliJ Idea. Never edit a compressed file, as it might be overwritten by you or someone else compressing the respective source file. (the compressed one's not too nice to read, anyway ;-)
+Apply changes only to the designated source file (<filename>.source.js) and get hold of JavaScript Compressor Plugin from the Idea Plugin Repository to compress it to <filename>.js afterwards.
+For debugging purposes (or if you are not using IntelliJ Idea), it's best to make pertaining html pages refer to the respective source.js file.

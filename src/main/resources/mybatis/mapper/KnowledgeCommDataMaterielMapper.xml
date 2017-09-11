@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.allin.knowledge.mapper.KnowledgeCommDataMaterielMapper" >
+  <resultMap id="abatorgenerated_KnowledgeCommDataMaterielResult" type="com.allin.knowledge.model.KnowledgeCommDataMateriel" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="materiel_name" property="materielName" jdbcType="VARCHAR" />
+    <result column="materiel_category" property="materielCategory" jdbcType="INTEGER" />
+    <result column="category_type" property="categoryType" jdbcType="INTEGER" />
+    <result column="tree_level" property="treeLevel" jdbcType="INTEGER" />
+    <result column="is_leaf" property="isLeaf" jdbcType="INTEGER" />
+    <result column="parent_id" property="parentId" jdbcType="BIGINT" />
+    <result column="full_path" property="fullPath" jdbcType="VARCHAR" />
+    <result column="direction_id" property="directionId" jdbcType="INTEGER" />
+    <result column="position_id" property="positionId" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="sort_id" property="sortId" jdbcType="INTEGER" />
+    <result column="is_valid" property="isValid" jdbcType="INTEGER" />
+  </resultMap>
+
+  <!-- 通用查询结果列-->
+  <sql id="abatorgenerated_Example_Where_Clause">
+    <if test="materielName!=null">and materiel_name = #{materielName,jdbcType=VARCHAR}</if>
+    <if test="directionId!=null">and direction_id = #{directionId,jdbcType=VARCHAR}</if>
+  </sql>
+
+  <!-- 查询getList -->
+  <select id="getLists" parameterType="java.util.HashMap" resultMap="abatorgenerated_KnowledgeCommDataMaterielResult">
+    SELECT
+    id,	 materiel_name, materiel_category, category_type, tree_level, is_leaf, parent_id, full_path, direction_id, position_id, create_time, sort_id, is_valid
+    FROM knowledge_comm_data_materiel
+    WHERE 1=1
+    <include refid="abatorgenerated_Example_Where_Clause" />
+    limit #{firstResult, jdbcType=BIGINT},#{maxResult, jdbcType=BIGINT}
+  </select>
+</mapper>

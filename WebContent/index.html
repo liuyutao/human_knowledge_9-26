@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+    <link rel="stylesheet" href="css/index.css"/>
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <script src="bower_components/popper.js/dist/umd/popper.min.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="bower_components/d3/d3.js"></script>
+    <script src="js/index.js"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row flex-xl-nowrap">
+        <div class="col-lg-12">
+            <div class="text-center">
+
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin:0 20px;">
+        <div class="col-lg-12">
+            <div class="card" style="padding:20px; ">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="text-center">
+                            <h1 class="title" id="title"></h1>
+                        </div>
+                    </div>
+                    <div class="col-lg-1">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                请选择部门
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <!--<a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-1">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                请选择人员
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <!--<a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <a class="dropdown-item" href="#">Something else here</a>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <button class="btn btn-primary" id="startAnswer">开始答题</button>
+                        <button class="btn btn-primary" id="prev" style="display: none;">上一图</button>
+                        <button class="btn btn-primary" id="next" style="display: none;">下一图</button>
+                        <button class="btn btn-primary" id="submit" style="display: none;">提交</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="margin: 20px;" id="row1">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        前面观
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne"
+                     data-parent="#accordion">
+                    <div class="card-body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="700" height="800" id="leftSVG">
+                            <image xlink:href="images/muscle-front-no-text.png" x="50" y="10" width="625"
+                                   height="758"></image>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        答题区
+                    </h5>
+                </div>
+
+                <div>
+                    <div class="card-body" id="answerLeft">
+                        <div class="row answers"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin: 20px; display: none;" id="row2">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        后面观
+                    </h5>
+                </div>
+
+                <div>
+                    <div class="card-body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="700" height="800" id="rightSVG">
+                            <image xlink:href="images/muscle-back-no-text.png" x="50" y="10" width="625"
+                                   height="758"></image>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        答题区
+                    </h5>
+                </div>
+
+                <div>
+                    <div class="card-body" id="answerRight">
+                        <div class="row answers">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin: 20px; display:none;" id="row3">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        人体骨骼结构
+                    </h5>
+                </div>
+
+                <div>
+                    <div class="card-body">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1332" id="rightSVG">
+                            <image xlink:href="images/pic3-clear-copy-small.png" x="50" y="10" width="1000"
+                                   height="1432"></image>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header" role="tab" id="headingOne">
+                    <h5 class="mb-0">
+                        答题区
+                    </h5>
+                </div>
+
+                <div>
+                    <div class="card-body" id="answerRight">
+                        <div class="row answers">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

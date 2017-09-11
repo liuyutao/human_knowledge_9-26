@@ -1,0 +1,24 @@
+body{
+    background: url(../images/bg.jpg) top center no-repeat;
+    -webkit-background-size: 100%;
+    background-size: 100%;
+}
+.title{
+
+}
+
+svg{
+
+}
+
+text.text{
+    stroke:black;
+}
+
+.answers div{
+    margin-top: 3px;
+}
+
+.answers div .index{
+    text-align: right;
+}

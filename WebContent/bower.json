@@ -1,0 +1,22 @@
+{
+  "name": "medicine-test-muscle",
+  "authors": [
+    "liuyutao <361292910@qq.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "2.0",
+    "bootstrap": "4.0",
+    "d3": "^4.10.0"
+  }
+}
