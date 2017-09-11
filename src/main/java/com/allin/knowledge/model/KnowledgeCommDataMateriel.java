@@ -1,10 +1,12 @@
 package com.allin.knowledge.model;
 
 import com.allin.knowledge.util.BaseForm;
+import org.apache.commons.collections.CollectionUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "knowledge_comm_data_materiel")
 public class KnowledgeCommDataMateriel extends BaseForm {
@@ -295,5 +297,18 @@ public class KnowledgeCommDataMateriel extends BaseForm {
      */
     public void setIsValid(Integer isValid) {
         this.isValid = isValid;
+    }
+
+    public static KnowledgeCommDataMateriel findKnowledgeCommDataMateriel(List<KnowledgeCommDataMateriel> materielList, Long id){
+        KnowledgeCommDataMateriel patientBaseinfo = null;
+        if (!CollectionUtils.isEmpty(materielList) && id != null){
+            for (KnowledgeCommDataMateriel commDataMateriel : materielList) {
+                if (id.compareTo(commDataMateriel.getId()) == 0){
+                    patientBaseinfo = commDataMateriel;
+                    break;
+                }
+            }
+        }
+        return patientBaseinfo;
     }
 }

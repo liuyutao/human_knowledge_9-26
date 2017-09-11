@@ -90,7 +90,6 @@ public class KnowledgeCustomerAnswerController {
         }
         List<Map> optionList = null;
         optionList = JSONArray.fromObject(optionJson.toString());
-        System.out.println("==========" + paramJson);
         Map saveMap;
         Map optionMap;
         int sortId = 0;
@@ -124,5 +123,12 @@ public class KnowledgeCustomerAnswerController {
         responseObject.setResponseMessage("SUCCESS");
         responseObject.setResponseStatus(true);
         return JSON.toJSONString(responseObject);
+    }
+
+    @RequestMapping(value = "/getResultMapList", method = RequestMethod.GET)
+    public String getResultMapList(@RequestParam Map paramJson) {
+        String jsonString = JSON.toJSONString(answerService.getResultMapList(paramJson));
+        System.out.println(jsonString);
+        return jsonString;
     }
 }

@@ -17,6 +17,12 @@
     <result column="sort_id" property="sortId" jdbcType="INTEGER" />
   </resultMap>
 
+  <!-- 通用查询结果列-->
+  <sql id="abatorgenerated_Example_Where_Clause">
+    <if test="customerId!=null">and customer_id = #{customerId,jdbcType=BIGINT}</if>
+    <if test="examId!=null">and exam_id = #{examId,jdbcType=BIGINT}</if>
+  </sql>
+
   <!-- 添加 （动态匹配所有有值字段）-->
   <insert id="inserts" parameterType="java.util.HashMap">
     <selectKey keyProperty="id" order="AFTER" resultType="int">
@@ -50,5 +56,12 @@
     <if test="sortId!=null">#{sortId}</if>
     <![CDATA[)]]>
   </insert>
+
+  <select id="getList" parameterType="java.util.HashMap" resultMap="abatorgenerated_KnowledgeCustomerAnswerResult">
+    select id, customer_id, answer_id, exam_id, materiel_id, materiel_name, option_id, option_name, is_right_option, answer_time, create_time, is_valid, sort_id from knowledge_customer_answer
+    WHERE 1=1
+    <include refid="abatorgenerated_Example_Where_Clause" />
+    limit #{firstResult, jdbcType=BIGINT},#{maxResult, jdbcType=BIGINT}
+  </select>
 
 </mapper>
