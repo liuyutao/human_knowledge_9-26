@@ -1436,6 +1436,7 @@ $(function () {
         }
     };
 
+    deb
     var timer = {};
 
     controller.init();
