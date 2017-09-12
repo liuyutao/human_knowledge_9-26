@@ -3,16 +3,421 @@
  */
 $(function () {
     var server = "";    //http://192.168.1.142:18080
+
+
+    var controller = {
+        init: function () {
+            var t = this;
+            //t.showAll();// TODO: delete this
+            $("title").text(config.title);
+            $("#title").text(config.title);
+            t.initImg();
+            t.bindStartButton();
+            t.initUser();
+            t.initData();
+        },
+        customerId: null,
+        initImg: function () {
+            var t = this;
+            t.setSVGImgSize();
+            $(window).on("resize", function (e) {
+                t.setSVGImgSize();
+                t.updateSelectedPosition();
+            })
+        },
+        setSVGImgSize: function () {
+            var t = this;
+
+            var containerWidth = $(".card-left:visible").width();
+            var svgWidth = containerWidth;
+
+
+            var frontSVGLeft = (svgWidth - config.frontMap.img.width) / 2;
+            config.frontMap.img.left = frontSVGLeft;
+            $("#frontSVG").attr("width", svgWidth)
+                .attr("height", config.frontMap.img.height);
+            d3.select("#frontSVG").select("image").attr("x", frontSVGLeft);
+
+            var backSVGLeft = (svgWidth - config.backMap.img.width) / 2;
+            config.backMap.img.left = backSVGLeft;
+            $("#backSVG").attr("width", svgWidth)
+                .attr("height", config.backMap.img.height);
+            d3.select("#backSVG").select("image").attr("x", backSVGLeft);
+            var boneSVGLeft = (svgWidth - config.boneMap.img.width) / 2;
+            config.boneMap.img.left = boneSVGLeft;
+            $("#boneSVG").attr("width", svgWidth)
+                .attr("height", config.boneMap.img.height);
+            d3.select("#boneSVG").select("image").attr("x", boneSVGLeft);
+
+
+        },
+        initData: function () {
+            var t = this;
+            $.ajax({
+                url: config.api.getPicList,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    t.data = data.responseData.dataList;
+                }
+            })
+        },
+        initUser: function () {
+            var t = this;
+
+            $.ajax({
+                url: config.api.getUser,
+                type: "GET",
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    if (data && data.responseData && data.responseData.dataList) {
+                        var users = data.responseData.dataList;
+                        var departs = [];
+                        var departIds = [];
+                        $.each(users, function (index, d) {
+                            var obj = {departmentName: d.departmentName, departmentId: d.departmentId};
+                            if (departIds.indexOf(d.departmentId) < 0) {
+                                departIds.push(d.departmentId);
+                                departs.push({departmentName: d.departmentName, departmentId: d.departmentId});
+                            }
+                        });
+                        t.buildSelector(departs, users);
+                    }
+
+                }
+            })
+        },
+        /*构建选择器*/
+        buildSelector: function (departs, users) {
+            var t = this;
+
+            var departsHtml = $.map(departs, function (item) {
+                return '<a class="dropdown-item" href="#" departmentId=' + item.departmentId + '>' + item.departmentName + '</a>';
+            });
+            var usersHtml = $.map(users, function (item) {
+                return '<a class="dropdown-item" href="#"  customerId=' + item.customerId + ' departmentId=' + item.departmentId + '>' + item.customerName + '</a>';
+            });
+            $("#departs").html(departsHtml.join(""));
+            $("#users").html(usersHtml.join(""));
+
+            $("#departs a").on("click", function (e) {
+                var departmentId = $(this).attr("departmentId");
+                $("#departSelect").text($(this).text());
+                $("#users a").hide();
+                $("#users a[departmentId=" + departmentId + "]").show();
+            });
+            $("#users a").on("click", function (e) {
+                $("#userSelect").text($(this).text());
+                t.customerId = $(this).attr("customerId");
+            })
+        },
+        bindStartButton: function () {
+            var t = this;
+
+            $("#startAnswer").on("click", function () {
+                t.picIndex = 1;
+                t.startAnswer();
+                $(this).hide();
+                $("#next").show();
+                t.bindSubmit();
+                t.bindNext();
+                t.bindPrev();
+            });
+        },
+        bindPrev: function () {
+            var t = this;
+            $("#prev").on("click", function () {
+                if (t.picIndex > 1) {
+                    t.picIndex--;
+                    if (t.picIndex == 1) {
+                        $("#prev").hide();
+                        $("#next").show();
+                    }
+                    $("#submit").hide();
+                    t.show(t.picIndex);
+                }
+            });
+        },
+        bindNext: function () {
+            var t = this;
+
+            $("#next").on("click", function () {
+                if (t.picIndex < 3) {
+                    t.picIndex++;
+                    if (t.picIndex > 1) {
+                        $("#prev").show();
+                    }
+                    if (t.picIndex == 3) {
+                        $("#next").hide();
+                        $("#submit").show();
+                    }
+                    t.show(t.picIndex);
+                }
+            });
+        },
+        show: function (index) {
+            $("div[id^=row]").hide();
+            $("#row" + index).show();
+        },
+        bindSubmit: function () {
+            var t = this;
+
+            $("#submit").on("click", function (e) {
+                var allInputs = $(".answers input");
+                if (!t.customerId) {
+                    alert("请选择用户名");
+                    return;
+                }
+                var rst = [];
+                allInputs.each(function (index, item) {
+                    rst.push({
+                        materielId: $(item).attr("id"),
+                        materielName: t.getById($(item).attr("id")),
+                        optionId: $(item).attr("id"),
+                        optionName: $(item).val()
+                    });
+                });
+
+                var data = {};
+                data.optionJson = rst;
+                data.customerId = parseInt(t.customerId);
+                data = {paramJson: JSON.stringify(data)};
+                debugger;
+                $.ajax({
+                    url: config.api.save,
+                    type: "post",
+                    dataType: "json",
+                    data: data,
+                    success: function (data) {
+                        if (data && data.responseObject && data.responseStatus) {
+                            t.showResult();
+                        }
+                    }
+                });
+                console.log(rst);
+            })
+        },
+        startAnswer: function () {
+            var t = this;
+            var randomPositions = t.getRandomPosition();
+            t.showSelectedPosition(randomPositions);
+            t.createInput(randomPositions);
+        },
+        getRandomPosition: function () {
+            var t = this;
+
+            var result = {};
+
+            function getRandomInArray(arr, num) {
+                var l = arr.length;
+                var rst = [];
+                var i = 0;
+                var tempArr = [];
+                while (i < num) {
+                    var obj = {};
+                    var index = Math.floor(Math.random() * l);
+                    if (tempArr.indexOf(index) < 0) {
+                        obj = $.extend(obj, arr[index]);
+                        tempArr.push(index);
+                        rst.push(obj);
+                        i++;
+                    }
+                }
+                return rst;
+            }
+
+            config.front = result.front = getRandomInArray(config.frontMap.positions, config.frontMap.questInputNum);
+            config.back = result.back = getRandomInArray(config.backMap.positions, config.backMap.questInputNum);
+            config.bone = result.bone = getRandomInArray(config.boneMap.positions, config.boneMap.questInputNum);
+
+            function sort(a, b) {
+                if (a.index < b.index) {
+                    return -1
+                } else if (a == b) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            }
+
+            result.front = result.front.sort(sort);
+            result.back = result.back.sort(sort);
+            result.bone = result.bone.sort(sort);
+
+            t.positions = result;
+        },
+        showSelectedPosition: function () {
+            var t = this;
+            t.clear();
+            function show(el, arr, type, left) {
+                el.selectAll("text")
+                    .data(arr)
+                    .enter()
+                    .append("text")
+                    .attr("class", "text")
+                    .attr("id", function (d) {
+                        return d.id;
+                    })
+                    .attr("x", function (d, i) {
+                        var compareIndex;
+                        if (type) {
+                            if (type == "left") {
+                                compareIndex = config.frontMap.leftNum;
+                            } else {
+                                compareIndex = config.backMap.leftNum;
+                            }
+                            if (d.index <= compareIndex) {
+                                return d.x + d.title.length * 20 + left - 10;
+                            } else {
+                                return d.x + left;
+                            }
+                        } else {
+                            return d.x + left;
+                        }
+                    })
+                    .attr("y", function (d, i) {
+                        return d.y + 23
+                    })
+                    .text(function (d, i) {
+                        return (i + 1); //+ "_" + d.title ;
+                    })
+                    .attr("title", function (d) {
+                        return d.title
+                    })
+            }
+
+            show(d3.select("#frontSVG"), t.positions.front, "left", config.frontMap.img.left);
+            show(d3.select("#backSVG"), t.positions.back, "right", config.backMap.img.left);
+            show(d3.select("#boneSVG"), t.positions.bone, "", config.boneMap.img.left);
+        },
+        updateSelectedPosition: function () {
+            var t = this;
+
+            function update(el, arr, type, left) {
+                console.log("updating");
+                el.selectAll("text")
+                    .data(arr)
+                    .attr("class", "text")
+                    .attr("x", function (d, i) {
+                        var compareIndex;
+                        if (type) {
+                            if (type == "left") {
+                                compareIndex = config.frontMap.leftNum;
+                            } else {
+                                compareIndex = config.backMap.leftNum;
+                            }
+                            if (d.index <= compareIndex) {
+                                return d.x + d.title.length * 20 + left - 10;
+                            } else {
+                                return d.x + left;
+                            }
+                        } else {
+                            return d.x + left;
+                        }
+                    })
+                    .attr("y", function (d, i) {
+                        return d.y + 23
+                    })
+            }
+
+            update(d3.select("#frontSVG"), t.positions.front, "left", config.frontMap.img.left);
+            update(d3.select("#backSVG"), t.positions.back, "right", config.backMap.img.left);
+            update(d3.select("#boneSVG"), t.positions.bone, "", config.boneMap.img.left);
+        },
+        clear: function () {
+            d3.selectAll("text.text").remove();
+        },
+        createInput: function (randompositions) {
+            var t = this;
+
+            function createInput(el, arr) {
+                var ul = $(el).find(".row");
+                for (var i = 0, l = arr.length; i < l; i++) {
+                    ul.append("<div class='col-lg-2 text-align-right index'>" + (i + 1) + "</div>" +
+                        "<div class='col-lg-4 '><Input index='" + arr[i].index + "'  id='" + arr[i].id + "' style='width:100%;' /></div>");
+                }
+            }
+
+            createInput($("#answer1"), t.positions.front);
+            createInput($("#answer2"), t.positions.back);
+            createInput($("#answer3"), t.positions.bone);
+        },
+
+        getById: function (id) {
+            var t = this;
+
+            for (var i = 0; i < t.data.length; i++) {
+                var obj = t.data[i];
+                if (obj.id == id) {
+                    return obj.materielName
+                }
+            }
+        },
+        showAll: function () {
+            var t = this;
+            $("div[id^=row]").show();
+            function show(el, arr) {
+                el.selectAll("text")
+                    .data(arr)
+                    .enter()
+                    .append("text")
+                    .attr("class", "text")
+                    .attr("font-size", "16")
+                    .attr("font-weight", "lighter")
+                    .attr("stroke-width", "0")
+                    .attr("stroke-color", "white")
+                    .attr("text-stroke", "none")
+                    .attr("fill", "black")
+                    .attr("font-family", "SimSun")
+                    .attr("shape-rendering", "crispEdges")
+                    .attr("x", function (d) {
+                        return d.x + 50
+                    })
+                    .attr("y", function (d) {
+                        return d.y + 23
+                    })
+                    .text(function (d, i) {
+                        return d.title;
+                    })
+            }
+
+            show(d3.select("#frontSVG"), config.frontMap.positions);
+            show(d3.select("#backSVG"), config.backMap.positions);
+            show(d3.select("#boneSVG"), config.boneMap.positions);
+        },
+        showResult: function () {
+            var t = this;
+            $.ajax({
+                url: config.api.getResult,
+                data: {
+                    paramJson: JSON.stringify({customerId: t.customerId})
+                },
+                type:"GET",
+                dataType:"JSON",
+                success: function (data) {
+                    $("#buttonsBox").hide();
+                    $("#row1").hide();
+                    $("#row2").hide();
+                    $("#row3").hide();
+                    $("#rowResult").show();
+                }
+            });
+
+        }
+    };
+
     var config = {
         api: {
             getPicList: server + "/knowledge/comm/data/materiel/getMapList",
             save: server + "/knowledge/customer/answer/create",
-            getUser: server + "/knowledge/customer/baseinfo/getMapList"
+            getUser: server + "/knowledge/customer/baseinfo/getMapList",
+            getResult: server + "knowledge/customer/answer/getResultMapList"
         },
         title: "医学名词测验",
         frontMap: {
             leftNum: 13,
-            questInputNum: 20,
+            questInputNum: 15,
             img: {
                 src: "muscle-front-no-text.png",
                 width: 625,
@@ -315,7 +720,7 @@ $(function () {
                 width: 625,
                 height: 758
             },
-            questInputNum: 20,
+            questInputNum: 15,
             positions: [{
                 index: 1,
                 title: "枕额肌额腹",
@@ -517,10 +922,11 @@ $(function () {
         },
         boneMap: {
             leftNum: 4,
+            questInputNum: 20,
             img: {
                 src: "pic3-clear-copy-small.png",
-                width: 625,
-                height: 758
+                width: 1000,
+                height: 1440
             },
             positions: [{
                 index: 1,
@@ -1026,317 +1432,7 @@ $(function () {
                 x: 781,
                 y: 1208,
                 id: 165
-            }],
-            questInputNum: 30
-        }
-    };
-
-    var controller = {
-        init: function () {
-            var t = this;
-            //t.showAll();// TODO: delete this
-            $("title").text(config.title);
-            $("#title").text(config.title);
-            t.bindStartButton();
-            t.initUser();
-            t.initData();
-        },
-        customerId:null,
-        initData: function () {
-            var t = this;
-            $.ajax({
-                url: config.api.getPicList,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    t.data = data.responseData.dataList;
-                }
-            })
-        },
-        initUser: function () {
-            var t = this;
-
-            $.ajax({
-                url: config.api.getUser,
-                type: "GET",
-                dataType: "json",
-                success: function (data) {
-                    console.log(data);
-                    if (data && data.responseData && data.responseData.dataList) {
-                        var users = data.responseData.dataList;
-                        var departs = [];
-                        var departIds = [];
-                        $.each(users, function (index,d) {
-                            var obj  = {departmentName: d.departmentName, departmentId: d.departmentId};
-                            if(departIds.indexOf(d.departmentId)<0){
-                                departIds.push(d.departmentId);
-                                departs.push ({departmentName: d.departmentName, departmentId: d.departmentId});
-                            }
-                        });
-                        t.buildSelector(departs, users);
-                    }
-
-                }
-            })
-        },
-        /*构建选择器*/
-        buildSelector: function (departs, users) {
-            var t = this;
-
-            var departsHtml = $.map(departs, function (item) {
-                return '<a class="dropdown-item" href="#" departmentId=' + item.departmentId + '>' + item.departmentName + '</a>';
-            });
-            var usersHtml = $.map(users, function (item) {
-                return '<a class="dropdown-item" href="#"  customerId=' + item.customerId + ' departmentId=' + item.departmentId + '>' + item.customerName + '</a>';
-            });
-            $("#departs").html(departsHtml.join(""));
-            $("#users").html(usersHtml.join(""));
-
-            $("#departs a").on("click", function (e) {
-                var departmentId = $(this).attr("departmentId");
-                $("#departSelect").text($(this).text());
-                $("#users a").hide();
-                $("#users a[departmentId=" + departmentId + "]").show();
-            });
-            $("#users a").on("click", function (e) {
-                $("#userSelect").text($(this).text());
-                t.customerId = $(this).attr("customerId");
-            })
-        },
-        bindStartButton: function () {
-            var t = this;
-
-            $("#startAnswer").on("click", function () {
-                t.picIndex = 1;
-                t.startAnswer();
-                $(this).hide();
-                $("#next").show();
-                t.bindSubmit();
-                t.bindNext();
-                t.bindPrev();
-            });
-        },
-        bindPrev: function () {
-            var t = this;
-            $("#prev").on("click", function () {
-                if (t.picIndex > 1) {
-                    t.picIndex--;
-                    if (t.picIndex == 1) {
-                        $("#prev").show();
-                    }
-                    $("#submit").hide();
-                    t.show(t.picIndex);
-                }
-            });
-        },
-        bindNext: function () {
-            var t = this;
-
-            $("#next").on("click", function () {
-                if (t.picIndex < 3) {
-                    t.picIndex++;
-                    if (t.picIndex > 1) {
-                        $("#prev").show();
-                    }
-                    if (t.picIndex == 3) {
-                        $("#prev").show();
-                        $("#submit").show();
-                    }
-                    t.show(t.picIndex);
-                }
-            });
-        },
-        show: function (index) {
-            $("div[id^=row]").hide();
-            $("#row" + index).show();
-        },
-        bindSubmit: function () {
-            var t = this;
-
-            $("#submit").on("click", function (e) {
-                var allInputs = $(".answers input");
-                if(!t.customerId){
-                    alert("请选择用户名");
-                    return ;
-                }
-                var rst = [];
-                allInputs.each(function (index, item) {
-                    rst.push({
-                        materielId: $(item).attr("id"),
-                        materielName: t.getById($(item).attr("id")),
-                        optionId: $(item).attr("id"),
-                        optionName: $(item).val()
-                    });
-                });
-
-                var data = {};
-                data.optionJson = rst;
-                data.customerId = parseInt(t.customerId);
-                data ={paramJson:JSON.stringify(data)};
-                debugger;
-                $.ajax({
-                    url: config.api.save,
-                    type: "post",
-                    dataType: "json",
-                    data: data,
-                    success: function (data) {
-
-                    }
-                });
-                console.log(rst);
-            })
-        },
-        startAnswer: function () {
-            var t = this;
-            var randomPositions = t.getRandomPosition();
-            t.showSelectedPosition(randomPositions);
-            t.createInput(randomPositions);
-        },
-        getRandomPosition: function () {
-            var result = {};
-
-            function getRandomInArray(arr, num) {
-                var l = arr.length;
-                var rst = [];
-                var i = 0;
-                var tempArr = [];
-                while (i < num) {
-                    var obj = {};
-                    var index = Math.floor(Math.random() * l);
-                    if (tempArr.indexOf(index) < 0) {
-                        obj = $.extend(obj, arr[index]);
-                        tempArr.push(index);
-                        rst.push(obj);
-                        i++;
-                    }
-                }
-                return rst;
-            }
-
-            result.front = getRandomInArray(config.frontMap.positions, config.frontMap.questInputNum);
-            result.back = getRandomInArray(config.backMap.positions, config.backMap.questInputNum);
-            result.bone = getRandomInArray(config.boneMap.positions, config.boneMap.questInputNum);
-
-            function sort(a, b) {
-                if (a.index < b.index) {
-                    return -1
-                } else if (a == b) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-
-            result.front = result.front.sort(sort);
-            result.back = result.back.sort(sort);
-            result.bone = result.bone.sort(sort);
-
-            return result;
-        },
-        showSelectedPosition: function (positions) {
-            var t = this;
-            t.clear();
-            function show(el, arr, type) {
-                el.selectAll("text")
-                    .data(arr)
-                    .enter()
-                    .append("text")
-                    .attr("class", "text")
-                    .attr("id", function (d) {
-                        return d.id;
-                    })
-                    .attr("x", function (d, i) {
-                        var compareIndex;
-                        if (type) {
-                            if (type == "left") {
-                                compareIndex = config.frontMap.leftNum;
-                            } else {
-                                compareIndex = config.backMap.leftNum;
-                            }
-                            if (d.index <= compareIndex) {
-                                return d.x + 30 + d.title.length * 20;
-                            } else {
-                                return d.x + 50;
-                            }
-                        } else {
-                            return d.x + 50;
-                        }
-                    })
-                    .attr("y", function (d, i) {
-                        return d.y + 23
-                    })
-                    .text(function (d, i) {
-                        return (i + 1); //+ "_" + d.title ;
-                    })
-                    .attr("title", function (d) {
-                        return d.title
-                    })
-            }
-
-            show(d3.select("#frontSVG"), positions.front, "left");
-            show(d3.select("#backSVG"), positions.back, "right");
-            show(d3.select("#boneSVG"), positions.bone);
-        },
-        clear: function () {
-            d3.selectAll("text.text").remove();
-        },
-        createInput: function (randompositions) {
-            var t = this;
-
-            function createInput(el, arr) {
-                var ul = $(el).find(".row");
-                for (var i = 0, l = arr.length; i < l; i++) {
-                    ul.append("<div class='col-lg-1 text-align-right index'>" + (i + 1) + "</div>" +
-                        "<div class='col-lg-5 '><Input index='" + arr[i].index + "'  id='" + arr[i].id + "' style='width:160px;' /></div>");
-                }
-            }
-
-            createInput($("#answer1"), randompositions.front);
-            createInput($("#answer2"), randompositions.back);
-            createInput($("#answer3"), randompositions.bone);
-        },
-
-        getById: function (id) {
-            var t = this;
-
-            for (var i = 0; i < t.data.length; i++) {
-                var obj = t.data[i];
-                if(obj.id==id){
-                    return obj.materielName
-                }
-            }
-        },
-        showAll: function () {
-            var t = this;
-            $("div[id^=row]").show();
-            function show(el, arr) {
-                el.selectAll("text")
-                    .data(arr)
-                    .enter()
-                    .append("text")
-                    .attr("class", "text")
-                    .attr("font-size", "16")
-                    .attr("font-weight", "lighter")
-                    .attr("stroke-width", "0")
-                    .attr("stroke-color", "white")
-                    .attr("text-stroke", "none")
-                    .attr("fill", "black")
-                    .attr("font-family", "SimSun")
-                    .attr("shape-rendering", "crispEdges")
-                    .attr("x", function (d) {
-                        return d.x + 50
-                    })
-                    .attr("y", function (d) {
-                        return d.y + 23
-                    })
-                    .text(function (d, i) {
-                        return d.title;
-                    })
-            }
-
-            show(d3.select("#frontSVG"), config.frontMap.positions);
-            show(d3.select("#backSVG"), config.backMap.positions);
-            show(d3.select("#boneSVG"), config.boneMap.positions);
+            }]
         }
     };
 
