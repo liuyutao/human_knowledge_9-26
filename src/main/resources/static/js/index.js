@@ -15,6 +15,7 @@ $(function () {
             t.bindStartButton();
             t.initUser();
             t.initData();
+            //t.renderResult(); // TODO: to be delete
         },
         customerId: null,
         initImg: function () {
@@ -110,6 +111,7 @@ $(function () {
             $("#users a").on("click", function (e) {
                 $("#userSelect").text($(this).text());
                 t.customerId = $(this).attr("customerId");
+                t.customerName = $(this).text();
             })
         },
         bindStartButton: function () {
@@ -190,7 +192,7 @@ $(function () {
                     dataType: "json",
                     data: data,
                     success: function (data) {
-                        if (data && data.responseObject && data.responseStatus) {
+                        if (data && data.responseData && data.responseStatus) {
                             t.showResult();
                         }
                     }
@@ -391,19 +393,46 @@ $(function () {
             $.ajax({
                 url: config.api.getResult,
                 data: {
-                    paramJson: JSON.stringify({customerId: t.customerId})
+                    paramJson: JSON.stringify({customerId:t.customerId })//}) 1504491450474
                 },
-                type:"GET",
-                dataType:"JSON",
+                type: "GET",
+                dataType: "JSON",
                 success: function (data) {
-                    $("#buttonsBox").hide();
-                    $("#row1").hide();
-                    $("#row2").hide();
-                    $("#row3").hide();
-                    $("#rowResult").show();
+                    t.renderResult(data);
                 }
             });
 
+        },
+        renderResult: function (data) {
+            var t = this;
+
+            $("#buttonsBox").hide();
+            $("#row1").hide();
+            $("#row2").hide();
+            $("#row3").hide();
+            $("#rowResult").show();
+            if (data) {
+                $("#testMan").text(t.customerName);
+                $("#testScore").text(data.responseData.dataScore);
+
+                function crhtml(arr) {
+                    var html = "";
+                    $.each(arr, function (index, item) {
+                        html += "<tr " + ( item.isRightOption ? "bgcolor='#A2D95Am'" : "bgcolor='#FA6D42'") + ">";
+                        html += "<td>" + (index+1) + "</td><td>" + item.materielName + "</td><td>" + item.optionName + "</td>";
+                        html += "</tr>";
+                    });
+                    return html;
+                }
+
+                var html1 = crhtml(data.responseData.dataList0);
+                var html2 = crhtml(data.responseData.dataList1);
+                var html3 = crhtml(data.responseData.dataList2);
+
+                $("#rst1").html(html1);
+                $("#rst2").html(html2);
+                $("#rst3").html(html3);
+            }
         }
     };
 
@@ -412,7 +441,7 @@ $(function () {
             getPicList: server + "/knowledge/comm/data/materiel/getMapList",
             save: server + "/knowledge/customer/answer/create",
             getUser: server + "/knowledge/customer/baseinfo/getMapList",
-            getResult: server + "knowledge/customer/answer/getResultMapList"
+            getResult: server + "/knowledge/customer/answer/getResultMapList"
         },
         title: "医学名词测验",
         frontMap: {
@@ -1435,7 +1464,6 @@ $(function () {
             }]
         }
     };
-
 
     var timer = {};
 
