@@ -177,7 +177,7 @@ $(function () {
                         materielId: $(item).attr("id"),
                         materielName: t.getById($(item).attr("id")),
                         optionId: $(item).attr("id"),
-                        optionName: $(item).val()
+                        optionName: $.trim($(item).val())
                     });
                 });
 
