@@ -270,7 +270,7 @@ $(function () {
                                 compareIndex = config.backMap.leftNum;
                             }
                             if (d.index <= compareIndex) {
-                                return d.x + d.title.length * 20 + left - 10;
+                                return d.x + d.title.length * 18 + left - 10;
                             } else {
                                 return d.x + left;
                             }
@@ -393,7 +393,7 @@ $(function () {
             $.ajax({
                 url: config.api.getResult,
                 data: {
-                    paramJson: JSON.stringify({customerId:t.customerId })//}) 1504491450474
+                    paramJson: JSON.stringify({customerId:t.customerId,firstResult:0,maxResult:50})//}) 1504491450474
                 },
                 type: "GET",
                 dataType: "JSON",
@@ -760,7 +760,7 @@ $(function () {
                 index: 2,
                 title: "胸锁乳突肌",
                 x: 26,
-                y: 90,
+                y: 95,
                 id: 50
             }, {
                 index: 3,
