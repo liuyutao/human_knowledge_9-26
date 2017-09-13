@@ -11,4 +11,6 @@ public interface KnowledgeCustomerAnswerService {
 
     long create(Map paramMap);
 
+    public Map getResultMapList(Map paramJson);
+
 }

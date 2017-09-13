@@ -68,7 +68,8 @@ public class KnowledgeCommDataMaterielController {
     @RequestMapping(value = "/getMapList", method = RequestMethod.GET)
     public String getMapList(@RequestParam Map paramJson) {
         System.out.println("======" + paramJson);
-        System.out.println(JSON.toJSONString(materielService.getMapList(paramJson)));
-        return JSON.toJSONString(materielService.getMapList(paramJson));
+        String string = JSON.toJSONString(materielService.getMapList(paramJson));
+        System.out.println(string);
+        return string;
     }
 }

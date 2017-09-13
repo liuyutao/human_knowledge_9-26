@@ -21,6 +21,7 @@
   <sql id="abatorgenerated_Example_Where_Clause">
     <if test="materielName!=null">and materiel_name = #{materielName,jdbcType=VARCHAR}</if>
     <if test="directionId!=null">and direction_id = #{directionId,jdbcType=VARCHAR}</if>
+    <if test="idList!=null">and id IN (${idList})</if>
   </sql>
 
   <!-- 查询getList -->
