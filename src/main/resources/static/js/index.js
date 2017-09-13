@@ -97,7 +97,7 @@ $(function () {
                 return '<a class="dropdown-item" href="#" departmentId=' + item.departmentId + '>' + item.departmentName + '</a>';
             });
             var usersHtml = $.map(users, function (item) {
-                return '<a class="dropdown-item" href="#"  customerId=' + item.customerId + ' departmentId=' + item.departmentId + '>' + item.customerName + '</a>';
+                return '<a class="dropdown-item" href="#"  customerId=' + item.customerId + ' departmentId=' + item.departmentId + ' departmentName=' + item.departmentName + '>' + item.customerName + '</a>';
             });
             $("#departs").html(departsHtml.join(""));
             $("#users").html(usersHtml.join(""));
@@ -112,6 +112,7 @@ $(function () {
                 $("#userSelect").text($(this).text());
                 t.customerId = $(this).attr("customerId");
                 t.customerName = $(this).text();
+                t.departmentName = $(this).attr("departmentName");
             })
         },
         bindStartButton: function () {
@@ -185,7 +186,6 @@ $(function () {
                 data.optionJson = rst;
                 data.customerId = parseInt(t.customerId);
                 data = {paramJson: JSON.stringify(data)};
-                debugger;
                 $.ajax({
                     url: config.api.save,
                     type: "post",
@@ -284,9 +284,9 @@ $(function () {
                     .text(function (d, i) {
                         return (i + 1); //+ "_" + d.title ;
                     })
-                    .attr("title", function (d) {
+                /*    .attr("title", function (d) {
                         return d.title
-                    })
+                    })*/
             }
 
             show(d3.select("#frontSVG"), t.positions.front, "left", config.frontMap.img.left);
@@ -359,7 +359,7 @@ $(function () {
         showAll: function () {
             var t = this;
             $("div[id^=row]").show();
-            function show(el, arr) {
+            function show(el, arr,left) {
                 el.selectAll("text")
                     .data(arr)
                     .enter()
@@ -387,6 +387,47 @@ $(function () {
             show(d3.select("#frontSVG"), config.frontMap.positions);
             show(d3.select("#backSVG"), config.backMap.positions);
             show(d3.select("#boneSVG"), config.boneMap.positions);
+
+            function show(el, arr, type, left) {
+                el.selectAll("text")
+                    .data(arr)
+                    .enter()
+                    .append("text")
+                    .attr("class", "text")
+                    .attr("id", function (d) {
+                        return d.id;
+                    })
+                    .attr("x", function (d, i) {
+                        var compareIndex;
+                        if (type) {
+                            if (type == "left") {
+                                compareIndex = config.frontMap.leftNum;
+                            } else {
+                                compareIndex = config.backMap.leftNum;
+                            }
+                            if (d.index <= compareIndex) {
+                                return d.x + d.title.length * 18 + left - 10;
+                            } else {
+                                return d.x + left;
+                            }
+                        } else {
+                            return d.x + left;
+                        }
+                    })
+                    .attr("y", function (d, i) {
+                        return d.y + 23
+                    })
+                    .text(function (d, i) {
+                        return (i + 1); //+ "_" + d.title ;
+                    })
+                /*    .attr("title", function (d) {
+                 return d.title
+                 })*/
+            }
+
+            show(d3.select("#frontSVG"), config.frontMap.positions, "left", config.frontMap.img.left);
+            show(d3.select("#backSVG"),  config.backMap.positions, "right", config.backMap.img.left);
+            show(d3.select("#boneSVG"), config.boneMap.positions, "", config.boneMap.img.left);
         },
         showResult: function () {
             var t = this;
@@ -413,6 +454,7 @@ $(function () {
             $("#rowResult").show();
             if (data) {
                 $("#testMan").text(t.customerName);
+                $("#departmentName").text(t.departmentName);
                 $("#testScore").text(data.responseData.dataScore);
                 $("#rightNum").text(data.responseData.dataScore/2);
 
