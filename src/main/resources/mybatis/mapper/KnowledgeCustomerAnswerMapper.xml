@@ -61,6 +61,7 @@
     select id, customer_id, answer_id, exam_id, materiel_id, materiel_name, option_id, option_name, is_right_option, answer_time, create_time, is_valid, sort_id from knowledge_customer_answer
     WHERE 1=1
     <include refid="abatorgenerated_Example_Where_Clause" />
+    ORDER BY id  DESC
     limit #{firstResult, jdbcType=BIGINT},#{maxResult, jdbcType=BIGINT}
   </select>
 

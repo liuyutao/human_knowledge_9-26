@@ -59,7 +59,7 @@ public class KnowledgeCustomerAnswerServiceImpl implements KnowledgeCustomerAnsw
                 answerMap.put("firstResult", Long.parseLong(object.get("firstResult").toString()));
             }
             if (!object.containsKey("maxResult")) {
-                answerMap.put("maxResult", Long.MAX_VALUE);
+                answerMap.put("maxResult", 50);
             }else{
                 answerMap.put("maxResult", Long.parseLong(object.get("maxResult").toString()));
             }
