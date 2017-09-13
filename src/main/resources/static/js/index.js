@@ -134,8 +134,8 @@ $(function () {
                     t.picIndex--;
                     if (t.picIndex == 1) {
                         $("#prev").hide();
-                        $("#next").show();
                     }
+                    $("#next").show();
                     $("#submit").hide();
                     t.show(t.picIndex);
                 }
@@ -336,8 +336,8 @@ $(function () {
             function createInput(el, arr) {
                 var ul = $(el).find(".row");
                 for (var i = 0, l = arr.length; i < l; i++) {
-                    ul.append("<div class='col-lg-2 text-align-right index'>" + (i + 1) + "</div>" +
-                        "<div class='col-lg-4 '><Input index='" + arr[i].index + "'  id='" + arr[i].id + "' style='width:100%;' /></div>");
+                    ul.append("<div class='col-lg-4 text-align-right index'>" + (i + 1) + "</div>" +
+                        "<div class='col-lg-8 '><Input index='" + arr[i].index + "'  id='" + arr[i].id + "' style='width:100%;' /></div>");
                 }
             }
 
@@ -414,11 +414,20 @@ $(function () {
             if (data) {
                 $("#testMan").text(t.customerName);
                 $("#testScore").text(data.responseData.dataScore);
+                $("#rightNum").text(data.responseData.dataScore/2);
 
                 function crhtml(arr) {
                     var html = "";
                     $.each(arr, function (index, item) {
-                        html += "<tr " + ( item.isRightOption ? "bgcolor='#A2D95Am'" : "bgcolor='#FA6D42'") + ">";
+                        var clz = "";
+                        if(item.isRightOption){
+                            clz = "yes";
+                        }else{
+                            if(item.optionName!=""){
+                                clz = "no";
+                            }
+                        }
+                        html += "<tr class=" + clz + ">";
                         html += "<td>" + (index+1) + "</td><td>" + item.materielName + "</td><td>" + item.optionName + "</td>";
                         html += "</tr>";
                     });

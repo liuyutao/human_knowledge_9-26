@@ -22,3 +22,10 @@ text.text{
 .answers div .index{
     text-align: right;
 }
+
+.yes{
+    color:#A2D95A;
+}
+.no{
+    color:#FA6D42;
+}
