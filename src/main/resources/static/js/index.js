@@ -494,7 +494,7 @@ $(function () {
             getUser: server + "/knowledge/customer/baseinfo/getMapList",
             getResult: server + "/knowledge/customer/answer/getResultMapList"
         },
-        title: "医学名词测验",
+        title: "骨科基础知识测验",
         frontMap: {
             leftNum: 13,
             questInputNum: 15,
