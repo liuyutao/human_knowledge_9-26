@@ -696,97 +696,97 @@ $(function () {
                 y: 391,
                 id: 32
             }, {
-                index: 34,
+                index: 33,
                 title: "阔筋膜张肌",
                 x: 470,
                 y: 411,
                 id: 33
             }, {
-                index: 35,
+                index: 34,
                 title: "髂腰肌",
                 x: 470,
                 y: 431,
                 id: 34
             }, {
-                index: 36,
+                index: 35,
                 title: "耻骨肌",
                 x: 470,
                 y: 452,
                 id: 35
             }, {
-                index: 37,
+                index: 36,
                 title: "长收肌",
                 x: 470,
                 y: 471,
                 id: 36
             }, {
-                index: 38,
+                index: 37,
                 title: "股薄肌",
                 x: 470,
                 y: 492,
                 id: 37
             }, {
-                index: 39,
+                index: 38,
                 title: "缝匠肌",
                 x: 470,
                 y: 511,
                 id: 38
             }, {
-                index: 40,
+                index: 39,
                 title: "股直肌",
                 x: 470,
                 y: 535,
                 id: 39
             }, {
-                index: 41,
+                index: 40,
                 title: "股外侧肌",
                 x: 470,
                 y: 552,
                 id: 40
             }, {
-                index: 42,
+                index: 41,
                 title: "股内侧肌",
                 x: 470,
                 y: 574,
                 id: 41
             }, {
-                index: 43,
+                index: 42,
                 title: "腓骨长肌",
                 x: 470,
                 y: 596,
                 id: 42
             }, {
-                index: 44,
+                index: 43,
                 title: "腓肠肌",
                 x: 470,
                 y: 615,
                 id: 43
             }, {
-                index: 45,
+                index: 44,
                 title: "胫骨前肌",
                 x: 470,
                 y: 634,
                 id: 44
             }, {
-                index: 46,
+                index: 45,
                 title: "比目鱼肌",
                 x: 470,
                 y: 648,
                 id: 45
             }, {
-                index: 47,
+                index: 46,
                 title: "趾长伸肌",
                 x: 470,
                 y: 667,
                 id: 46
             }, {
-                index: 48,
+                index: 47,
                 title: "外踝",
                 x: 470,
                 y: 699,
                 id: 47
             }, {
-                index: 49,
+                index: 48,
                 title: "内踝",
                 x: 470,
                 y: 720,
@@ -911,7 +911,7 @@ $(function () {
                 , id: 66
             }, {
                 index: 19,
-                title: "尺侧腕屈肌",
+                title: "尺侧腕伸肌",
                 x: 442,
                 y: 358
                 , id: 67
