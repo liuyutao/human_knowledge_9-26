@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,12 @@ public class KnowledgeCustomerAnswerServiceImpl implements KnowledgeCustomerAnsw
             List<Map> respList2 = new ArrayList<Map>();
             int humanScore = 0;
             List<KnowledgeCustomerAnswer> answerList = answerMapper.getList(answerMap);
+            Collections.sort(answerList, new Comparator<KnowledgeCustomerAnswer>() {
+                @Override
+                public int compare(KnowledgeCustomerAnswer before, KnowledgeCustomerAnswer after) {
+                    return before.getId().compareTo(after.getId());
+                }
+            });
             StringBuilder isStr = new StringBuilder("0");
             if (CollectionUtils.isNotEmpty(answerList)){
                 for (KnowledgeCustomerAnswer customerAnswer : answerList) {
