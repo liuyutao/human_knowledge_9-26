@@ -803,7 +803,7 @@ $(function () {
             questInputNum: 15,
             positions: [{
                 index: 1,
-                title: "枕额肌额腹",
+                title: "枕额肌枕腹",
                 x: 23,
                 y: 63,
                 id: 49
@@ -1519,4 +1519,5 @@ $(function () {
     var timer = {};
 
     controller.init();
+    window.a = controller;
 });
