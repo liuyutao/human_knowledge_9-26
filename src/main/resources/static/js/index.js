@@ -173,14 +173,14 @@ $(function () {
                 }
                 var rst = [];
                 allInputs.each(function (index, item) {
-                    var val = $(item).val();
+                    var val = $.trim($(item).val());
                     val = val.replace("（","(");
                     val = val.replace("）",")");
                     rst.push({
                         materielId: $(item).attr("id"),
                         materielName: t.getById($(item).attr("id")),
                         optionId: $(item).attr("id"),
-                        optionName: $.trim($(item).val())
+                        optionName: val
                     });
                 });
 
