@@ -71,7 +71,6 @@ $(function () {
                 type: "GET",
                 dataType: "json",
                 success: function (data) {
-                    console.log(data);
                     if (data && data.responseData && data.responseData.dataList) {
                         var users = data.responseData.dataList;
                         var departs = [];
@@ -174,6 +173,9 @@ $(function () {
                 }
                 var rst = [];
                 allInputs.each(function (index, item) {
+                    var val = $(item).val();
+                    val = val.replace("（","(");
+                    val = val.replace("）",")");
                     rst.push({
                         materielId: $(item).attr("id"),
                         materielName: t.getById($(item).attr("id")),
@@ -197,7 +199,6 @@ $(function () {
                         }
                     }
                 });
-                console.log(rst);
             })
         },
         startAnswer: function () {
@@ -1519,5 +1520,4 @@ $(function () {
     var timer = {};
 
     controller.init();
-    window.a = controller;
 });
